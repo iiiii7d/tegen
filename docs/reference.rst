@@ -17,8 +17,27 @@ Game
 ----
 
 .. autoclass:: Game
+   :members:
 
 Scene
 -----
 
 .. autoclass:: Scene
+   :members:
+
+Objects
+-------
+
+.. autoclass:: Object
+   :members:
+
+.. autoclass:: Screen
+   :members:
+
+.. autoclass:: Sprite
+   :members:
+
+Pixel Utils
+-----------
+
+.. automodule:: pixel

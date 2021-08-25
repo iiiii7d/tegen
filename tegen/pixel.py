@@ -11,7 +11,7 @@ def from_2d_array(arr: List[List[str]], anchor: str='tr') -> PixelMap:
     :rtype: PixelMap"""
     # TODO: functionality for anchors
     result = {}
-    for y, yv in enum(arr):
-        for x, xv in enum(xv):
+    for y, yv in enumerate(arr):
+        for x, xv in enumerate(yv):
             result[(x, y)] = yv
     return result

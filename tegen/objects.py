@@ -1,6 +1,6 @@
-import tegen.pixel
+import tegen.pixel as pixel
 
-class Object():
+class Object:
     """The base class of all objects.
     
     .. versionadded:: 0.0"""

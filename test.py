@@ -4,7 +4,7 @@ import time
 game = tegen.Game()
 scene = tegen.Scene()
 
-class GameObj(tegen.Sprite):
+class GameObj(tegen.objects.Sprite):
     pass
 
 scene.add_objects(GameObj())

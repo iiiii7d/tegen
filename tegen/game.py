@@ -5,7 +5,7 @@ import math
 from typing import Union
 
 from tegen.scene import Scene
-from tegen.objects import Object, Screen
+from tegen.objects import Screen
 
 class Game:
     """The entry point for the game.
@@ -56,7 +56,7 @@ class Game:
             from tegen import __version__
             print(term.bold("tegen v"+__version__))
             print("number of colours: "+str(term.number_of_colors))
-            print("terminal size (h,w): "+str((term.height,term.width)))
+            print("terminal size (h,w): "+str((term.height, term.width)))
             time.sleep(3)
         print(term.home + term.clear, end='')
         self.game_on = True
@@ -88,7 +88,7 @@ class Game:
         """Gets the number of milliseconds per loop.
         
         .. versionadded:: 0.0
-        
+
         :rtype: float or int or None"""
         if len(self.speeds) != 0: return sum(self.speeds)/len(self.speeds)
         else: return None

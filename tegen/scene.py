@@ -6,7 +6,7 @@ class Scene:
     
     .. versionadded:: 0.0"""
 
-    def __init__():
+    def __init__(self):
         self.objects = {}
         self.screen_position = (0, 0)
 
