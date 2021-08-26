@@ -2,7 +2,7 @@ from typing import List
 PixelMap = dict
 
 def from_2d_array(arr: List[List[str]], anchor: str='tr') -> PixelMap:
-    """Geneerates a map of pixels from a 2d array.
+    """Generates a map of pixels from a 2d array.
 
     .. versionadded:: 0.0
 

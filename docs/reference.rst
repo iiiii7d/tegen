@@ -28,6 +28,8 @@ Scene
 Objects
 -------
 
+.. py:currentmodule:: tegen.object
+
 .. autoclass:: Object
    :members:
 
@@ -40,4 +42,6 @@ Objects
 Pixel Utils
 -----------
 
-.. automodule:: pixel
+.. py:currentmodule:: tegen.pixel
+
+.. autofunction:: from_2d_array

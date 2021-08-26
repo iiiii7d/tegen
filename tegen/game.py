@@ -68,6 +68,8 @@ class Game:
 
         .. versionadded:: 0.0"""
         term = self.term
+        for obj in self.objects:
+            obj.on_end(self)
         self.game_on = False
         print(term.home + term.clear, end='')
 
@@ -78,12 +80,17 @@ class Game:
 
         :param Scene scene: The scene to load
         :param bool clear_objects: Whether to clear all objects in the previous scene before loading the new scene"""
+        for obj in self.objects:
+            obj.on_end(self)
         self.current_scene = scene
         if clear_objects: self.objects.clear()
         self.objects.update(scene.objects)
         for obj in self.objects:
             obj.on_init(self)
 
+    def call_event(self, event: str):
+        pass
+            
     def mspl(self) -> Union[Union[float, int], None]:
         """Gets the number of milliseconds per loop.
         

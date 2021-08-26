@@ -11,7 +11,7 @@ class Scene:
         self.screen_position = (0, 0)
 
     def add_objects(self, *objs: Object):
-        """Adds :py:class:`Object`s to the scene.
+        """Adds :py:class:`Object` s to the scene.
         
         .. versionadded:: 0.0
         
@@ -23,10 +23,11 @@ class Scene:
             self.objects[obj] = {}
 
     def remove_object(self, *objs: Object, nonexist_error: bool=False):
-        """Removes :py:class:`Object`s from the scene.
+        """Removes :py:class:`Object` s from the scene.
 
         .. versionadded:: 0.0
 
+        :param Object objs: The objects to remove
         :param bool nonexist_error: Whether to raise an error if an object does not exist in the scene."""
         for obj in objs:
             try:
