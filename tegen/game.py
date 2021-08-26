@@ -68,8 +68,8 @@ class Game:
 
         .. versionadded:: 0.0"""
         term = self.term
-        for obj in self.objects:
-            obj.on_end(self)
+        for id_, v in self.objects:
+            v['obj'].on_end(self)
         self.game_on = False
         print(term.home + term.clear, end='')
 
@@ -80,16 +80,25 @@ class Game:
 
         :param Scene scene: The scene to load
         :param bool clear_objects: Whether to clear all objects in the previous scene before loading the new scene"""
-        for obj in self.objects:
-            obj.on_end(self)
+        for id_, v in self.objects:
+            v['obj'].on_end(self)
         self.current_scene = scene
         if clear_objects: self.objects.clear()
         self.objects.update(scene.objects)
-        for obj in self.objects:
-            obj.on_init(self)
+        for id_, v in self.objects:
+            v['obj'].on_init(self)
 
     def call_event(self, event: str):
-        pass
+        """Calls an event, running `on_<event name>` in all :py:class:`Object` s, if present.
+        
+        .. versionadded:: 0.0
+        
+        :param str event: The name of the event to call"""
+        def empty():
+            pass
+        
+        for id_, v in self.objects:
+            getattr(v['obj'], 'on_'+event, default=empty)()
             
     def mspl(self) -> Union[Union[float, int], None]:
         """Gets the number of milliseconds per loop.

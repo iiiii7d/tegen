@@ -10,7 +10,6 @@ class Object:
         Called on scene load."""
         pass
 
-
     def on_end(self, game):
         """This method is to be overridden when extended.
         Called on scene unload."""
