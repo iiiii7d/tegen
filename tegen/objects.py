@@ -1,3 +1,4 @@
+import blessed
 import tegen.pixel as pixel
 
 class Object:
@@ -42,9 +43,59 @@ class Screen(Object):
         self.x = x
         self.y = y
 
+    def corners(self):
+        """Returns the global coordinates of the four corners of the screen.
+        
+        .. versionadded:: 0.0
+        
+        :returns: A list of coordinates, in the form ``[tl, tr, bl, br]``
+        :rtype: List[Tuple[int, int]]"""
+        term = blessed.Terminal()
+        tl = self.x, self.y
+        tr = self.x+term.width-1, self.y
+        bl = self.x, self.y+term.height-1
+        br = self.x+term.width-1, self.y+term.height-1
+        return [tl, tr, bl, br]
+
+    def edges(self):
+        """Returns the global x coordinate of the leftmost and rightmost columns,
+        and the global y coordinate of the topmost and bottommost rows of the screen.
+
+        .. versionadded:: 0.0
+
+        :returns: A tuple of values, in the form ``[lx, rx, ty, by]``
+        :rtype: Tuple[int, int, int, int]"""
+        term = blessed.Terminal()
+        lx = self.x
+        rx = self.x+term.width-1
+        ty = self.y
+        by = self.y+term.height-1
+        return lx, rx, ty, by
+
+
 class Sprite(Object):
     """Inherited from :py:class:`Object`. Represents a sprite.
 
     .. versionadded:: 0.0"""
     pixels = pixel.from_2d_array([['00ff00', '00ff00'],
                                   ['00ff00', '00ff00']])
+
+    def edges(self, x: int=0, y: int=0):
+        """Returns the global x coordinate of the leftmost and rightmost columns,
+        and the global y coordinate of the topmost and bottommost rows of the screen.
+
+        .. versionadded:: 0.0
+
+        :param int x: The global x coordinate of the anchor
+        :param int y: The global y coordinate of the anchor
+        :returns: A tuple of values, in the form ``[lx, rx, ty, by]``
+        :rtype: Tuple[int, int, int, int]"""
+        lx, ty = (float("inf"),)*2
+        rx, by = (0,)*2
+        for local_x, local_y in list(self.pixels.keys()):
+            if local_x > rx: rx = local_x
+            if local_x < lx: lx = local_x
+            if local_y > by: by = local_y
+            if local_y < ty: ty = local_y
+        
+        return x+lx, x+rx, y+ty, y+by

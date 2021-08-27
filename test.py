@@ -7,7 +7,7 @@ scene = tegen.Scene()
 class GameObj(tegen.objects.Sprite):
     pass
 
-scene.add_objects(GameObj())
+scene.add_object(GameObj(), "obj", 0, 1)
 
 game.start()
 game.load_scene(scene)

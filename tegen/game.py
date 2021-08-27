@@ -68,7 +68,7 @@ class Game:
 
         .. versionadded:: 0.0"""
         term = self.term
-        for id_, v in self.objects:
+        for id_, v in self.objects.items():
             v['obj'].on_end(self)
         self.game_on = False
         print(term.home + term.clear, end='')
@@ -80,12 +80,12 @@ class Game:
 
         :param Scene scene: The scene to load
         :param bool clear_objects: Whether to clear all objects in the previous scene before loading the new scene"""
-        for id_, v in self.objects:
+        for id_, v in self.objects.items():
             v['obj'].on_end(self)
         self.current_scene = scene
         if clear_objects: self.objects.clear()
         self.objects.update(scene.objects)
-        for id_, v in self.objects:
+        for id_, v in self.objects.items():
             v['obj'].on_init(self)
 
     def call_event(self, event: str):
@@ -97,7 +97,7 @@ class Game:
         def empty():
             pass
         
-        for id_, v in self.objects:
+        for id_, v in self.objects.items():
             getattr(v['obj'], 'on_'+event, default=empty)()
             
     def mspl(self) -> Union[Union[float, int], None]:
@@ -120,18 +120,30 @@ class Game:
         if avg_ms == 0: return math.inf
         else: return round(1000 / avg_ms, 2)
 
+    def get_displayed_pixel(self, x: int, y: int):
+        """Get the pixel at a certain global coordinate.
+        
+        .. versionadded:: 0.0
+        
+        :param int x: The global x coordinate of the pixel.
+        :param int y: The global y coordinate of the pixel."""
+        lx, rx, ty, by = self.screen.edges()
+        for data in self.objects.values():
+            pass
+
+
 
 def _loop(game: Game):
     """:meta private:"""
     term = game.term
     while game.game_on:
         loop_start = time.time()
-        for obj in game.objects.keys():
-            obj.pre_update(game)
-        for obj in game.objects.keys():
-            obj.update(game)
-        for obj in game.objects.keys():
-            obj.post_update(game)
+        for obj in game.objects.values():
+            obj['obj'].pre_update(game)
+        for obj in game.objects.values():
+            obj['obj'].update(game)
+        for obj in game.objects.values():
+            obj['obj'].post_update(game)
         print(term.home + str(game.lps()) + term.eol, flush=True)
         game.speeds.append(1000*(time.time()-loop_start))
         if len(game.speeds) > 100: game.speeds.pop(0)

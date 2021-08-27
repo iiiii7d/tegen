@@ -13,5 +13,5 @@ def from_2d_array(arr: List[List[str]], anchor: str='tr') -> PixelMap:
     result = {}
     for y, yv in enumerate(arr):
         for x, xv in enumerate(yv):
-            result[(x, y)] = yv
+            result[(x, y)] = {"Fore": yv}
     return result
