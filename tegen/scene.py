@@ -7,14 +7,13 @@ class Scene:
 
     def __init__(self):
         self.objects = {}
-        self.screen_position = (0, 0)
 
     def add_object(self, obj: Object, id_: str, x: float, y: float):
         """Adds an :py:class:`Object` to the scene.
         
         .. versionadded:: 0.0
         
-        :param Object objs: The objects to add
+        :param Object obj: The object to add
         :param str id_: The ID to give to the object
         :param float x: The global x coordinate of the anchor (local x=0)
         :param float y: The global y coordinate of the anchor (local y=0)

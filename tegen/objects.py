@@ -77,8 +77,10 @@ class Sprite(Object):
     """Inherited from :py:class:`Object`. Represents a sprite.
 
     .. versionadded:: 0.0"""
-    pixels = pixel.from_2d_array([['00ff00', '00ff00'],
-                                  ['00ff00', '00ff00']])
+    pixels = pixel.from_2d_array(fore=[['00ff00', '00ff00'],
+                                       ['00ff00', '00ff00']],
+                                 char=['██',
+                                       '██'])
 
     def edges(self, x: int=0, y: int=0):
         """Returns the global x coordinate of the leftmost and rightmost columns,
