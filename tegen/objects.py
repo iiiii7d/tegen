@@ -1,3 +1,4 @@
+from typing import List, Tuple, Dict
 import blessed
 
 import tegen.pixel as pixel
@@ -81,7 +82,7 @@ class Screen(Object):
         self.x = x
         self.y = y
 
-    def corners(self):
+    def corners(self) -> List[Tuple[int, int]]:
         """Returns the global coordinates of the four corners of the screen.
         
         .. versionadded:: 0.0
@@ -95,7 +96,7 @@ class Screen(Object):
         br = self.x+term.width-1, self.y+term.height-1
         return [tl, tr, bl, br]
 
-    def edges(self):
+    def edges(self) -> Tuple[int, int, int, int]:
         """Returns the global x coordinate of the leftmost and rightmost columns,
         and the global y coordinate of the topmost and bottommost rows of the screen.
 
@@ -122,7 +123,7 @@ class Sprite(Object):
                                        '███',
                                        '███'])
 
-    def edges(self):
+    def edges(self) -> Tuple[int, int, int, int]:
         """Returns the global x coordinate of the leftmost and rightmost columns,
         and the global y coordinate of the topmost and bottommost rows of the screen.
 
@@ -152,3 +153,53 @@ class Sprite(Object):
         for coords, pixel_dict in self.pixels.items():
             new_coords = (coords[0]+x, coords[1]+y)
             new_pixels[new_coords] = pixel_dict
+
+class Text(Object):
+    """Represents some text on a screen.
+
+    .. versionadded:: 0.0
+
+    :param str text: The text to start with"""
+
+    anchor = 'tl'
+
+    def __init__(self, text: str):
+        super().__init__()
+        self.text = text
+
+    def edges(self) -> Tuple[int, int, int, int]:
+        """Returns the global x coordinate of the leftmost and rightmost columns,
+        and the global y coordinate of the topmost and bottommost rows of the screen.
+
+        .. versionadded:: 0.0
+
+        :returns: A tuple of values, in the form ``[lx, rx, ty, by]``
+        :rtype: Tuple[int, int, int, int]"""
+        w = max([len(l) for l in self.text.split("\n")])
+        h = self.text.count('\n')+1
+        return self.x, self.x+w-1, self.y, self.y+h-1
+
+    def get_char_positions(self) -> Dict[tuple, str]:
+        """Get the positions of each charaacter relative to the anchor.
+
+        .. versionadded:: 0.0
+
+        :returns: A dict in the form ``{(local x, local y): char}``
+        :rtype: Dict[tuple, str]
+        :raises ValueError: if ``anchor`` is not one of ``tr``, ``tl``, ``br``, ``bl``, ``center``"""
+        w = max([len(l) for l in self.text.split("\n")])
+        h = self.text.count('\n')
+        if self.anchor == "center":
+            ox = round(w / 2)
+            oy = round(h / 2)
+        else:
+            if self.anchor not in ['tr', 'tl', 'br', 'bl']:
+                raise ValueError("'anchor' is not one of 'center', 'tr', 'tl', 'br', 'bl'")
+            ox = 0 if self.anchor[1] == 'l' else w - 0
+            oy = 0 if self.anchor[0] == 't' else h - 0
+        result = {}
+        for line_num, line in enumerate(self.text.split('\n')):
+            for char_num, char in enumerate(line):
+                result[(char_num-ox, line_num-oy)] = char
+        return result
+

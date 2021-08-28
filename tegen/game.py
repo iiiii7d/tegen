@@ -6,7 +6,7 @@ import math
 import traceback
 
 from tegen.scene import Scene
-from tegen.objects import Screen, Sprite, Object
+from tegen.objects import Screen, Sprite, Object, Text
 
 class Game:
     """The entry point for the game.
@@ -26,12 +26,40 @@ class Game:
        The looping thread of the game.
        
        .. versionadded:: 0.0
+
+    .. py:attribute:: keyboard_listener
+       :type: threading.Thread
+
+       The keyboard listening thread of the game.
+
+       .. versionadded:: 0.0
        
     .. py:attribute:: objects
        :type: Dict[object, dict]
        
        A list of objects currently loaded.
        
+       .. versionadded:: 0.0
+
+    .. py:attribute:: screen
+       :type: Screen
+
+       The screen object of the game.
+
+       .. versionadded:: 0.0
+
+    .. py:attribute:: current_scene
+       :type: Scene
+
+       The current scene that the game is showing.
+
+       .. versionadded:: 0.0
+
+    .. py:attribute:: speeds
+       :type: List[float]
+
+       A list of milliseconds per frame.
+
        .. versionadded:: 0.0"""
     
     term = blessed.Terminal()
@@ -146,12 +174,19 @@ class Game:
         for obj in self.objects.values():
             lx, rx, ty, by = obj.edges()
             if x < lx or x > rx or y < ty or y > by: continue
-            if not issubclass(type(obj), Sprite): continue
-            obj: Sprite # pacify linter
-            pixel_info = obj.pixels[(x-obj.x, y-obj.y)]
-            if 'back' in pixel_info.keys() and pixel_info['back'] is not None: back = pixel_info['back']
-            if 'fore' in pixel_info.keys() and ['fore'] is not None: fore = pixel_info['fore']
-            if 'char' in pixel_info.keys() and ['char'] is not None: char = pixel_info['char']
+            if issubclass(type(obj), Sprite):
+                obj: Sprite # pacify linter
+                pixel_info = obj.pixels[(x-obj.x, y-obj.y)]
+                if 'back' in pixel_info.keys() and pixel_info['back'] is not None: back = pixel_info['back']
+                if 'fore' in pixel_info.keys() and ['fore'] is not None: fore = pixel_info['fore']
+                if 'char' in pixel_info.keys() and ['char'] is not None: char = pixel_info['char']
+            elif issubclass(type(obj), Text):
+                obj: Text
+                pos = obj.get_char_positions()
+                if (x-obj.x, y-obj.y) not in pos.keys(): continue
+                char = pos[(x-obj.x, y-obj.y)]
+            else:
+                continue
         return back, fore, char
 
     def handle_error(self):

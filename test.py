@@ -20,8 +20,12 @@ class GameObj(tegen.objects.Sprite):
         if key == 'q':
             game.end()
 
-scene.add_object(GameObj(), "obj", 0, 1)
+class GameText(tegen.objects.Text):
+    pass
 
+scene.add_object(GameObj(), "obj", 0, 1)
+scene.add_object(GameText("abc"), "text", 0, 5)
+time.sleep(2)
 game.start(info_wait=1)
 try:
     game.add_keyboard_listener()

@@ -43,7 +43,7 @@ def _find_origin(order: Tuple[int, int], anchor: str):
     return ox, oy
 
 def from_2d_array(back: Optional[List[List[str]]]=None, fore: Optional[List[List[str]]]=None,
-                  char: Optional[List[str]]=None, anchor: str='tr') -> PixelMap:
+                  char: Optional[List[str]]=None, anchor: str='tl') -> PixelMap:
     """Generates a map of pixels from 2d arrays.
 
     .. versionadded:: 0.0
@@ -88,13 +88,13 @@ def from_2d_array(back: Optional[List[List[str]]]=None, fore: Optional[List[List
         if a is None: continue
         for y, yv in enumerate(a):
             for x, xv in enumerate(yv):
-                if not (x-ox+2, y-oy) in result.keys(): result[(x-ox+2, y-oy)] = {}
+                if not (x-ox, y-oy) in result.keys(): result[(x-ox, y-oy)] = {}
                 v = xv if name == 'char' else _parse_colours(xv)
                 if isinstance(v, str) and v.strip() == '': v = None
-                result[(x-ox+2, y-oy)][name] = v
+                result[(x-ox, y-oy)][name] = v
     return result
 
-def from_image(fp: str, anchor: str='tr', layer: str='fore', char: str='█') -> PixelMap:
+def from_image(fp: str, anchor: str='tl', layer: str='fore', char: str='█') -> PixelMap:
     """Generates a map of pixels from an image. Each pixel in the image represents one character in the terminal.
 
     :param str fp: The file path of the image

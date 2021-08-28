@@ -39,9 +39,14 @@ Objects
 .. autoclass:: Sprite
    :members:
 
+.. autoclass:: Text
+   :members:
+
 Pixel Utils
 -----------
 
 .. py:currentmodule:: tegen.pixel
 
 .. autofunction:: from_2d_array
+
+.. autofunction:: from_image

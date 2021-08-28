@@ -10,7 +10,7 @@ class Scene:
     def __init__(self):
         self.objects: Dict[tuple, Object] = {}
 
-    def add_object(self, obj: Object, id_: str, x: float, y: float):
+    def add_object(self, obj: Object, id_: str, x: float, y: float, override: bool=False):
         """Adds an :py:class:`Object` to the scene.
         
         .. versionadded:: 0.0
@@ -19,9 +19,13 @@ class Scene:
         :param str id_: The ID to give to the object
         :param float x: The global x coordinate of the anchor (local x=0)
         :param float y: The global y coordinate of the anchor (local y=0)
-        :raises ValueError: if one of the ``objs`` is a :py:class:`Screen`"""
+        :param bool override: Whether to override the existing object, if an object with the same ID exists
+        :raises ValueError: if one of the ``obj``s is a :py:class:`Screen`
+        :raises KeyError: if an object with the same ID exists and ``override`` is False"""
         if isinstance(obj, Screen):
             raise ValueError("Object added cannot be a screen, access the screen via `Game.screen`")
+        if id_ in self.objects.keys() and not override:
+            raise KeyError(f"Object '{id_}' already exists")
         obj.id = id_
         obj.x = x
         obj.y = y
