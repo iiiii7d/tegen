@@ -88,10 +88,10 @@ def from_2d_array(back: Optional[List[List[str]]]=None, fore: Optional[List[List
         if a is None: continue
         for y, yv in enumerate(a):
             for x, xv in enumerate(yv):
-                if not (x-ox, y-oy) in result.keys(): result[(x-ox, y-oy)] = {}
+                if not (x-ox, y-oy) in result.keys(): result[x-ox, y-oy] = {}
                 v = xv if name == 'char' else _parse_colours(xv)
                 if isinstance(v, str) and v.strip() == '': v = None
-                result[(x-ox, y-oy)][name] = v
+                result[x-ox, y-oy][name] = v
     return result
 
 def from_image(fp: str, anchor: str='tl', layer: str='fore', char: str='█') -> PixelMap:
@@ -115,6 +115,6 @@ def from_image(fp: str, anchor: str='tl', layer: str='fore', char: str='█') ->
     for x in range(i.size[0]):
         for y in range(i.size[1]):
             # pmap[x, y]
-            result[(x-ox+2, y-oy)][layer] = pmap[x, y]
-            result[(x-ox+2, y-oy)]['char'] = char
+            result[x-ox+2, y-oy][layer] = pmap[x, y]
+            result[x-ox+2, y-oy]['char'] = char
     return result

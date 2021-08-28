@@ -5,10 +5,15 @@ from tegen.objects import Screen, Object
 class Scene:
     """A game scene.
     
-    .. versionadded:: 0.0"""
+    .. versionadded:: 0.0
+    
+    .. py:attribute:: objects
+       :type: Dict[str, Object]
+       
+       A dict of objects, in the form of ``{id: object}``"""
 
     def __init__(self):
-        self.objects: Dict[tuple, Object] = {}
+        self.objects: Dict[str, Object] = {}
 
     def add_object(self, obj: Object, id_: str, x: float, y: float, override: bool=False):
         """Adds an :py:class:`Object` to the scene.

@@ -176,15 +176,15 @@ class Game:
             if x < lx or x > rx or y < ty or y > by: continue
             if issubclass(type(obj), Sprite):
                 obj: Sprite # pacify linter
-                pixel_info = obj.pixels[(x-obj.x, y-obj.y)]
+                pixel_info = obj.pixels[x-obj.x, y-obj.y]
                 if 'back' in pixel_info.keys() and pixel_info['back'] is not None: back = pixel_info['back']
                 if 'fore' in pixel_info.keys() and ['fore'] is not None: fore = pixel_info['fore']
                 if 'char' in pixel_info.keys() and ['char'] is not None: char = pixel_info['char']
             elif issubclass(type(obj), Text):
-                obj: Text
+                obj: Text # pacify linter
                 pos = obj.get_char_positions()
                 if (x-obj.x, y-obj.y) not in pos.keys(): continue
-                char = pos[(x-obj.x, y-obj.y)]
+                char = pos[x-obj.x, y-obj.y]
             else:
                 continue
         return back, fore, char
@@ -207,10 +207,8 @@ class Game:
         term = self.term
         self.game_on = False
         print(term.home + term.bright_red("An error has occured and the game will quit shortly.\n") + term.red(traceback.format_exc()) + term.eos)
-        print(term.bright_red("Press any key to continue..."), flush=True)
-        with term.cbreak():
-            term.inkey(timeout=15)
-
+        input(term.bright_red("Press enter to continue..."))
+        
 
 def _loop(game: Game):
     """:meta private:"""
@@ -236,7 +234,7 @@ def _loop(game: Game):
                     out += back_style(fore_style(char))
             print(term.home + out + term.eos, end="", flush=True)
 
-            print(term.home + str(game.fps()) + term.eol, flush=True)
+            #print(term.home + str(game.fps()) + term.eol, flush=True)
             game.speeds.append(1000*(time.time()-loop_start))
             if len(game.speeds) > 100: game.speeds.pop(0)
     except Exception:

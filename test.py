@@ -1,31 +1,31 @@
 import tegen
-import time
+import blessed
 
 game = tegen.Game()
 scene = tegen.Scene()
+term = blessed.Terminal()
 
 class GameObj(tegen.objects.Sprite):
-    count = 0
-    keys = ""
+    direction = 1
 
     def update(self, g: tegen.Game):
-        if self.count % 2 == 0:
-            self.x += 1
-        else:
-            self.x -= 1
-        self.count += 1
+        if self.x == 0: self.direction = 1
+        elif self.x == term.width-2: self.direction = -1
+        self.x += self.direction
 
-    def on_keyboard_press(self, g: tegen.Game, key: str):
-        self.keys += key
+class FpsText(tegen.objects.Text):
+    def update(self, g: tegen.Game):
+        self.text = "fps: "+str(g.fps())
+class KeyText(tegen.objects.Text):
+    def on_keyboard_press(self, g: tegen.Game, key: blessed.Keyboard):
+        self.text += key
         if key == 'q':
-            game.end()
-
-class GameText(tegen.objects.Text):
-    pass
+            g.end()
 
 scene.add_object(GameObj(), "obj", 0, 1)
-scene.add_object(GameText("abc"), "text", 0, 5)
-time.sleep(2)
+scene.add_object(FpsText("fps:"), "fps", 0, 0)
+scene.add_object(KeyText(" "), "key", 0, 4)
+
 game.start(info_wait=1)
 try:
     game.add_keyboard_listener()

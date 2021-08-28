@@ -1,4 +1,4 @@
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Union
 import blessed
 
 import tegen.pixel as pixel
@@ -6,11 +6,33 @@ import tegen.pixel as pixel
 class Object:
     """The base class of all objects.
     
-    .. versionadded:: 0.0"""
+    .. versionadded:: 0.0
+    
+    .. py:attribute:: x
+       :type: int
+    
+       The global x coordinate of the object, set when added to a scene
+       
+       .. versionadded:: 0.0
+       
+    .. py:attribute:: y
+       :type: int
+    
+       The global y coordinate of the object, set when added to a scene
+       
+       .. versionadded:: 0.0
+       
+    .. py:attribute:: id
+       :type: str
+    
+       The ID of the object, set when added to a scene
+       
+       .. versionadded:: 0.0"""
 
     def __init__(self):
         self.x: int = None
         self.y: int = None
+        self.id: str = None
 
     def edges(self):
         pass
@@ -60,14 +82,14 @@ class Object:
         :param Game g: The game object"""
         pass
 
-    def on_keyboard_press(self, g, key: str):
+    def on_keyboard_press(self, g, key: blessed.Keystroke):
         """This method is to be overridden when extended.
         Called on a key press.
 
         .. versionadded:: 0.0
 
         :param Game g: The game object
-        :param str key: The key pressed"""
+        :param blessed.Keystroke key: The key pressed"""
 
 
 class Screen(Object):
@@ -159,7 +181,17 @@ class Text(Object):
 
     .. versionadded:: 0.0
 
-    :param str text: The text to start with"""
+    :param str text: The text to start with
+    
+    .. py:attribute:: anchor
+       :type: str
+    
+       The anchor of text
+       
+    .. py:attribute:: text
+       :type: str
+       
+       The content of the text"""
 
     anchor = 'tl'
 
@@ -180,7 +212,7 @@ class Text(Object):
         return self.x, self.x+w-1, self.y, self.y+h-1
 
     def get_char_positions(self) -> Dict[tuple, str]:
-        """Get the positions of each charaacter relative to the anchor.
+        """Get the positions of each character relative to the anchor.
 
         .. versionadded:: 0.0
 
@@ -200,6 +232,6 @@ class Text(Object):
         result = {}
         for line_num, line in enumerate(self.text.split('\n')):
             for char_num, char in enumerate(line):
-                result[(char_num-ox, line_num-oy)] = char
+                result[char_num-ox, line_num-oy] = char
         return result
 
