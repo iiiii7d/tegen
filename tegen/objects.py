@@ -1,7 +1,9 @@
-from typing import List, Tuple, Dict, Union
+from typing import List, Tuple, Dict, Optional
 import blessed
+from blessed.keyboard import Keystroke
 
 import tegen.pixel as pixel
+
 
 class Object:
     """The base class of all objects.
@@ -82,14 +84,14 @@ class Object:
         :param Game g: The game object"""
         pass
 
-    def on_keyboard_press(self, g, key: blessed.Keystroke):
+    def on_keyboard_press(self, g, key: Keystroke):
         """This method is to be overridden when extended.
         Called on a key press.
 
         .. versionadded:: 0.0
 
         :param Game g: The game object
-        :param blessed.Keystroke key: The key pressed"""
+        :param Keystroke key: The key pressed"""
 
 
 class Screen(Object):
@@ -182,22 +184,48 @@ class Text(Object):
     .. versionadded:: 0.0
 
     :param str text: The text to start with
+    :param back: The background colour of the text
+    :type back: Tuple[int, int, int]
+    :param fore: The foreground colour of the text
+    :type fore: Tuple[int, int, int]
     
     .. py:attribute:: anchor
        :type: str
     
        The anchor of text
+
+       .. versionadded:: 0.0
        
     .. py:attribute:: text
        :type: str
        
-       The content of the text"""
+       The content of the text
+
+       .. versionadded:: 0.0
+
+    .. py:attribute:: back
+       :type: Tuple[int, int, int]
+
+       The background colour of the text
+
+       .. versionadded:: 0.0
+
+    .. py:attribute:: fore
+       :type: Tuple[int, int, int]
+
+       The foreground colour of the text
+
+       .. versionadded:: 0.0"""
 
     anchor = 'tl'
+    back: Tuple[int, int, int] = None
+    fore: Tuple[int, int, int] = None
 
-    def __init__(self, text: str):
+    def __init__(self, text: str, back: Optional[pixel.Colour]=None, fore: Optional[pixel.Colour]=None):
         super().__init__()
         self.text = text
+        if back is not None: self.back = pixel._parse_colours(back) # noqa
+        if fore is not None: self.fore = pixel._parse_colours(fore) # noqa
 
     def edges(self) -> Tuple[int, int, int, int]:
         """Returns the global x coordinate of the leftmost and rightmost columns,

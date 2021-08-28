@@ -28,7 +28,7 @@ Scene
 Objects
 -------
 
-.. py:currentmodule:: tegen.object
+.. py:currentmodule:: tegen.objects
 
 .. autoclass:: Object
    :members:

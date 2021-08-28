@@ -7,6 +7,7 @@ import traceback
 
 from tegen.scene import Scene
 from tegen.objects import Screen, Sprite, Object, Text
+import tegen.pixel as pixel
 
 class Game:
     """The entry point for the game.
@@ -134,6 +135,52 @@ class Game:
         for id_, obj in self.objects.items():
             getattr(obj, 'on_'+event, empty)(self, *args, **kwargs) # noqa
 
+    def add_object(self, obj: Object, id_: str, x: float, y: float, override: bool = False):
+        """Adds an :py:class:`Object` to the game.
+
+        .. versionadded:: 0.0
+
+        :param Object obj: The object to add
+        :param str id_: The ID to give to the object
+        :param float x: The global x coordinate of the anchor (local x=0)
+        :param float y: The global y coordinate of the anchor (local y=0)
+        :param bool override: Whether to override the existing object, if an object with the same ID exists
+        :raises ValueError: if the ``obj`` is a :py:class:`Screen`
+        :raises KeyError: if an object with the same ID exists and ``override`` is False"""
+        if isinstance(obj, Screen):
+            raise ValueError("Object added cannot be a screen, access the screen via `Game.screen`")
+        if id_ in self.objects.keys() and not override:
+            raise KeyError(f"Object '{id_}' already exists")
+        obj.id = id_
+        obj.x = x
+        obj.y = y
+        self.objects[id_] = obj
+
+    def remove_object_by_id(self, id_: str, nonexist_error: bool = False):
+        """Removes an :py:class:`Object` from the game by its ID.
+
+        .. versionadded:: 0.0
+
+        :param str id_: The ID of the object to remove
+        :param bool nonexist_error: Whether to raise an error if an object does not exist in the game."""
+        try:
+            del self.objects[id_]
+        except KeyError as e:
+            if nonexist_error: raise e
+
+    def remove_object_by_class(self, cls: type):
+        """Removes :py:class:`Object` s from the game by their class type.
+
+        .. versionadded:: 0.0
+
+        :param type cls: The class, should be a subclass of :py:class:`Object`
+        :raises TypeError: if the class is not a subclass of :py:class:`Object`"""
+        if not issubclass(cls, Object):
+            raise TypeError("Class is not subclass of Object")
+        for id_, obj in self.objects.items():
+            if isinstance(obj, cls):
+                del self.objects[id_]
+
     def add_keyboard_listener(self):
         """Adds a keyboard listener, to fire events when a key is pressed.
 
@@ -184,6 +231,8 @@ class Game:
                 obj: Text # pacify linter
                 pos = obj.get_char_positions()
                 if (x-obj.x, y-obj.y) not in pos.keys(): continue
+                if obj.back is not None: back = pixel._parse_colours(obj.back) # noqa
+                if obj.fore is not None: fore = pixel._parse_colours(obj.fore) # noqa
                 char = pos[x-obj.x, y-obj.y]
             else:
                 continue
@@ -198,14 +247,15 @@ class Game:
 
         .. code-block:: python
 
-           game.start()
            try:
+               game.start()
                ...
            except Exception as e:
                game.handle_error()
         """
         term = self.term
         self.game_on = False
+        time.sleep(0.5)
         print(term.home + term.bright_red("An error has occured and the game will quit shortly.\n") + term.red(traceback.format_exc()) + term.eos)
         input(term.bright_red("Press enter to continue..."))
         
@@ -246,7 +296,7 @@ def _keyboard(game: Game):
     try:
         while game.game_on:
             with term.cbreak():
-                key = term.inkey()
-                game.call_event("keyboard_press", key)
+                key = term.inkey(timeout=1)
+                if key: game.call_event("keyboard_press", key)
     except Exception:
         game.handle_error()

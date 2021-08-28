@@ -25,7 +25,7 @@ class Scene:
         :param float x: The global x coordinate of the anchor (local x=0)
         :param float y: The global y coordinate of the anchor (local y=0)
         :param bool override: Whether to override the existing object, if an object with the same ID exists
-        :raises ValueError: if one of the ``obj``s is a :py:class:`Screen`
+        :raises ValueError: if the ``obj`` is a :py:class:`Screen`
         :raises KeyError: if an object with the same ID exists and ``override`` is False"""
         if isinstance(obj, Screen):
             raise ValueError("Object added cannot be a screen, access the screen via `Game.screen`")

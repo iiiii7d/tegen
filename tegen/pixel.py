@@ -3,8 +3,9 @@ import re
 from PIL import Image
 
 PixelMap = Dict[tuple, Dict[str, Union[str, Tuple[int, int, int]]]]
+Colour = Union[Union[int, str], Union[tuple, list]]
 
-def _parse_colours(colour: Optional[Union[Union[int, str], Union[tuple, list]]]) -> Optional[Tuple[int, int, int]]:
+def _parse_colours(colour: Optional[Colour]) -> Optional[Tuple[int, int, int]]:
     """:meta private:"""
     if colour is None: return None
     if isinstance(colour, (list, tuple)):
@@ -20,6 +21,7 @@ def _parse_colours(colour: Optional[Union[Union[int, str], Union[tuple, list]]])
         return int(hexc[0:2], base=16), int(hexc[2:4], base=16), int(hexc[4:6], base=16)
     else:
         hexc = hex(colour)[2:]
+        while len(hexc) < 6: hexc = "0"+hexc
         return int(hexc[0:2], base=16), int(hexc[2:4], base=16), int(hexc[4:6], base=16)
 
 def _find_origin(order: Tuple[int, int], anchor: str):

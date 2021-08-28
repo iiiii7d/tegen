@@ -1,5 +1,6 @@
 import tegen
 import blessed
+from blessed.keyboard import Keystroke
 
 game = tegen.Game()
 scene = tegen.Scene()
@@ -17,17 +18,17 @@ class FpsText(tegen.objects.Text):
     def update(self, g: tegen.Game):
         self.text = "fps: "+str(g.fps())
 class KeyText(tegen.objects.Text):
-    def on_keyboard_press(self, g: tegen.Game, key: blessed.Keyboard):
+    def on_keyboard_press(self, g: tegen.Game, key: Keystroke):
         self.text += key
         if key == 'q':
             g.end()
 
 scene.add_object(GameObj(), "obj", 0, 1)
 scene.add_object(FpsText("fps:"), "fps", 0, 0)
-scene.add_object(KeyText(" "), "key", 0, 4)
+scene.add_object(KeyText(" ", back="00ff00"), "key", 0, 4)
 
-game.start(info_wait=1)
 try:
+    game.start(info_wait=1)
     game.add_keyboard_listener()
     game.load_scene(scene)
 except Exception:
