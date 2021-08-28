@@ -5,12 +5,27 @@ game = tegen.Game()
 scene = tegen.Scene()
 
 class GameObj(tegen.objects.Sprite):
-    pass
+    count = 0
+    keys = ""
+
+    def update(self, g: tegen.Game):
+        if self.count % 2 == 0:
+            self.x += 1
+        else:
+            self.x -= 1
+        self.count += 1
+
+    def on_keyboard_press(self, g: tegen.Game, key: str):
+        self.keys += key
+        if key == 'q':
+            game.end()
 
 scene.add_object(GameObj(), "obj", 0, 1)
 
-game.start()
-game.load_scene(scene)
-time.sleep(3)
-game.end()
+game.start(info_wait=1)
+try:
+    game.add_keyboard_listener()
+    game.load_scene(scene)
+except Exception:
+    game.handle_error()
 print("end")

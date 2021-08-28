@@ -1,4 +1,5 @@
 import blessed
+
 import tegen.pixel as pixel
 
 class Object:
@@ -6,30 +7,67 @@ class Object:
     
     .. versionadded:: 0.0"""
 
-    def on_init(self, game):
-        """This method is to be overridden when extended.
-        Called on scene load."""
+    def __init__(self):
+        self.x: int = None
+        self.y: int = None
+
+    def edges(self):
         pass
 
-    def on_end(self, game):
+    def on_init(self, g):
         """This method is to be overridden when extended.
-        Called on scene unload."""
+        Called on scene load.
+
+        .. versionadded:: 0.0
+
+        :param Game g: The game object"""
         pass
 
-    def pre_update(self, game):
+    def on_end(self, g):
         """This method is to be overridden when extended.
-        Called every tick of the game loop, before :py:meth:`update`."""
+        Called on scene unload.
+
+        .. versionadded:: 0.0
+
+        :param Game g: The game object"""
         pass
 
-    def update(self, game):
+    def pre_update(self, g):
         """This method is to be overridden when extended.
-        Called every tick of the game loop."""
+        Called every tick of the game loop, before :py:meth:`update`.
+
+        .. versionadded:: 0.0
+
+        :param Game g: The game object"""
         pass
 
-    def post_update(self, game):
+    def update(self, g):
         """This method is to be overridden when extended.
-        Called every tick of the game loop, after :py:meth:`update`."""
+        Called every tick of the game loop.
+
+        .. versionadded:: 0.0
+
+        :param Game g: The game object"""
         pass
+
+    def post_update(self, g):
+        """This method is to be overridden when extended.
+        Called every tick of the game loop, after :py:meth:`update`.
+
+        .. versionadded:: 0.0
+
+        :param Game g: The game object"""
+        pass
+
+    def on_keyboard_press(self, g, key: str):
+        """This method is to be overridden when extended.
+        Called on a key press.
+
+        .. versionadded:: 0.0
+
+        :param Game g: The game object
+        :param str key: The key pressed"""
+
 
 class Screen(Object):
     """Inherited from :py:class:`Object`. Represents the screen.
@@ -77,19 +115,19 @@ class Sprite(Object):
     """Inherited from :py:class:`Object`. Represents a sprite.
 
     .. versionadded:: 0.0"""
-    pixels = pixel.from_2d_array(fore=[['00ff00', '00ff00'],
-                                       ['00ff00', '00ff00']],
-                                 char=['██',
-                                       '██'])
+    pixels = pixel.from_2d_array(fore=[['f00', 'aaa', 'f00'],
+                                       ['aaa', 'f00', 'aaa'],
+                                       ['f00', 'aaa', 'f00']],
+                                 char=['███',
+                                       '███',
+                                       '███'])
 
-    def edges(self, x: int=0, y: int=0):
+    def edges(self):
         """Returns the global x coordinate of the leftmost and rightmost columns,
         and the global y coordinate of the topmost and bottommost rows of the screen.
 
         .. versionadded:: 0.0
 
-        :param int x: The global x coordinate of the anchor
-        :param int y: The global y coordinate of the anchor
         :returns: A tuple of values, in the form ``[lx, rx, ty, by]``
         :rtype: Tuple[int, int, int, int]"""
         lx, ty = (float("inf"),)*2
@@ -100,4 +138,17 @@ class Sprite(Object):
             if local_y > by: by = local_y
             if local_y < ty: ty = local_y
         
-        return x+lx, x+rx, y+ty, y+by
+        return self.x+lx, self.x+rx, self.y+ty, self.y+by
+
+    def local_move(self, x: int, y: int):
+        """Move the sprite's local coordinates.
+
+        .. versionadded:: 0.0
+
+        :param x: The local x value to move the coordinates by
+        :param y: The local y value to move the coordinates by
+        """
+        new_pixels = {}
+        for coords, pixel_dict in self.pixels.items():
+            new_coords = (coords[0]+x, coords[1]+y)
+            new_pixels[new_coords] = pixel_dict

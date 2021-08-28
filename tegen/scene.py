@@ -1,3 +1,5 @@
+from typing import Dict
+
 from tegen.objects import Screen, Object
 
 class Scene:
@@ -6,7 +8,7 @@ class Scene:
     .. versionadded:: 0.0"""
 
     def __init__(self):
-        self.objects = {}
+        self.objects: Dict[tuple, Object] = {}
 
     def add_object(self, obj: Object, id_: str, x: float, y: float):
         """Adds an :py:class:`Object` to the scene.
@@ -20,11 +22,10 @@ class Scene:
         :raises ValueError: if one of the ``objs`` is a :py:class:`Screen`"""
         if isinstance(obj, Screen):
             raise ValueError("Object added cannot be a screen, access the screen via `Game.screen`")
-        self.objects[id_] = {
-            "obj": obj,
-            "x": x,
-            "y": y
-        }
+        obj.id = id_
+        obj.x = x
+        obj.y = y
+        self.objects[id_] = obj
 
     def remove_object_by_id(self, id_: str, nonexist_error: bool=False):
         """Removes an :py:class:`Object` from the scene by its ID.
@@ -47,8 +48,8 @@ class Scene:
         :raises TypeError: if the class is not a subclass of :py:class:`Object`"""
         if not issubclass(cls, Object):
             raise TypeError("Class is not subclass of Object")
-        for id_, v in self.objects.items():
-            if isinstance(v['obj'], cls):
+        for id_, obj in self.objects.items():
+            if isinstance(obj, cls):
                 del self.objects[id_]
 
         
