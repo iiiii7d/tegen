@@ -196,7 +196,7 @@ class Game:
 
         :rtype: float or int or None"""
         if len(self.speeds) != 0: return sum(self.speeds)/len(self.speeds)
-        else: return None
+        return None
 
     def fps(self) -> Union[Union[float, int], None]:
         """Gets the number of frames per second.
@@ -207,7 +207,7 @@ class Game:
         if len(self.speeds) != 0: avg_ms = sum(self.speeds)/len(self.speeds)
         else: return None
         if avg_ms == 0: return math.inf
-        else: return round(1000 / avg_ms, 2)
+        return round(1000 / avg_ms, 2)
 
     def get_displayed_pixel(self, x: int, y: int) -> Tuple[Optional[Tuple[int, int, int]], Optional[Tuple[int, int, int]], Optional[str]]:
         """Get the pixel at a certain global coordinate.

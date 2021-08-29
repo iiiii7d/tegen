@@ -46,7 +46,6 @@ class Object:
         .. versionadded:: 0.0
 
         :param Game g: The game object"""
-        pass
 
     def on_end(self, g):
         """This method is to be overridden when extended.
@@ -55,7 +54,6 @@ class Object:
         .. versionadded:: 0.0
 
         :param Game g: The game object"""
-        pass
 
     def pre_update(self, g):
         """This method is to be overridden when extended.
@@ -64,7 +62,6 @@ class Object:
         .. versionadded:: 0.0
 
         :param Game g: The game object"""
-        pass
 
     def update(self, g):
         """This method is to be overridden when extended.
@@ -73,7 +70,6 @@ class Object:
         .. versionadded:: 0.0
 
         :param Game g: The game object"""
-        pass
 
     def post_update(self, g):
         """This method is to be overridden when extended.
@@ -82,7 +78,6 @@ class Object:
         .. versionadded:: 0.0
 
         :param Game g: The game object"""
-        pass
 
     def on_keyboard_press(self, g, key: Keystroke):
         """This method is to be overridden when extended.
@@ -263,4 +258,3 @@ class Text(Object):
             for char_num, char in enumerate(line):
                 result[char_num-ox, line_num-oy] = char
         return result
-

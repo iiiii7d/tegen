@@ -31,6 +31,9 @@ try:
     game.start(info_wait=1)
     game.add_keyboard_listener()
     game.load_scene(scene)
+    import time
+    time.sleep(15)
+    game.end()
 except Exception:
     game.handle_error()
 print("end")

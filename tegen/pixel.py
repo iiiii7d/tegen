@@ -19,7 +19,7 @@ def _parse_colours(colour: Optional[Colour]) -> Optional[Tuple[int, int, int]]:
         hexc = m.group(1)
         if len(hexc) == 3: hexc = 2*hexc[0]+2*hexc[1]+2*hexc[2]
         return int(hexc[0:2], base=16), int(hexc[2:4], base=16), int(hexc[4:6], base=16)
-    else:
+    elif isinstance(colour, int):
         hexc = hex(colour)[2:]
         while len(hexc) < 6: hexc = "0"+hexc
         return int(hexc[0:2], base=16), int(hexc[2:4], base=16), int(hexc[4:6], base=16)
@@ -90,7 +90,7 @@ def from_2d_array(back: Optional[List[List[str]]]=None, fore: Optional[List[List
         if a is None: continue
         for y, yv in enumerate(a):
             for x, xv in enumerate(yv):
-                if not (x-ox, y-oy) in result.keys(): result[x-ox, y-oy] = {}
+                if (x-ox, y-oy) not in result.keys(): result[x-ox, y-oy] = {}
                 v = xv if name == 'char' else _parse_colours(xv)
                 if isinstance(v, str) and v.strip() == '': v = None
                 result[x-ox, y-oy][name] = v
