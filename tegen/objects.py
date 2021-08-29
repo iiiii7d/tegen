@@ -247,8 +247,9 @@ class Text(Object):
         :returns: A dict in the form ``{(local x, local y): char}``
         :rtype: Dict[tuple, str]
         :raises ValueError: if ``anchor`` is not one of ``tr``, ``tl``, ``br``, ``bl``, ``center``"""
-        w = max([len(l) for l in self.text.split("\n")])
-        h = self.text.count('\n')
+        text = self.text
+        w = max([len(l) for l in text.split("\n")])
+        h = text.count('\n')
         if self.anchor == "center":
             ox = round(w / 2)
             oy = round(h / 2)
@@ -258,7 +259,7 @@ class Text(Object):
             ox = 0 if self.anchor[1] == 'l' else w - 0
             oy = 0 if self.anchor[0] == 't' else h - 0
         result = {}
-        for line_num, line in enumerate(self.text.split('\n')):
+        for line_num, line in enumerate(text.split('\n')):
             for char_num, char in enumerate(line):
                 result[char_num-ox, line_num-oy] = char
         return result

@@ -131,8 +131,9 @@ class Game:
         :param str event: The name of the event to call"""
         def empty():
             pass
-        
-        for id_, obj in self.objects.items():
+
+        items = list(self.objects.items())[:]
+        for id_, obj in items:
             getattr(obj, 'on_'+event, empty)(self, *args, **kwargs) # noqa
 
     def add_object(self, obj: Object, id_: str, x: float, y: float, override: bool = False):
@@ -218,7 +219,8 @@ class Game:
         :returns: A tuple of ``(back colour, fore colour, character)``
         :rtype: Tuple[Optional[Tuple[int, int, int]], Optional[Tuple[int, int, int]], Optional[str]]"""
         back, fore, char = (None,)*3
-        for obj in self.objects.values():
+        values = list(self.objects.values())[:]
+        for obj in values:
             lx, rx, ty, by = obj.edges()
             if x < lx or x > rx or y < ty or y > by: continue
             if issubclass(type(obj), Sprite):
@@ -255,9 +257,11 @@ class Game:
         """
         term = self.term
         self.game_on = False
+        print(term.home + term.clear_eos + term.bright_red("An error has occured and the game will quit shortly.\n") + term.red(traceback.format_exc()))
         time.sleep(0.5)
-        print(term.home + term.bright_red("An error has occured and the game will quit shortly.\n") + term.red(traceback.format_exc()) + term.eos)
-        input(term.bright_red("Press enter to continue..."))
+        print(term.bright_red("Press any key to continue..."))
+        with term.cbreak():
+            term.inkey(timeout=15)
         
 
 def _loop(game: Game):
@@ -282,9 +286,9 @@ def _loop(game: Game):
                     fore_style = (lambda o: o) if fore is None else term.color_rgb(*fore)
                     char = " " if char is None else char
                     out += back_style(fore_style(char))
-            print(term.home + out + term.eos, end="", flush=True)
+            print(term.home + out + term.clear_eos, end="", flush=True)
 
-            #print(term.home + str(game.fps()) + term.eol, flush=True)
+            #print(term.home + str(game.fps()) + term.clear_eol, flush=True)
             game.speeds.append(1000*(time.time()-loop_start))
             if len(game.speeds) > 100: game.speeds.pop(0)
     except Exception:
