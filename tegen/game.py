@@ -123,6 +123,17 @@ class Game:
         for id_, obj in self.objects.items():
             obj.on_init(self)
 
+    def save_scene(self) -> Scene:
+        """Saves the current game as a scene.
+        
+        .. versionadded:: 0.1
+        
+        :rtype: Scene"""
+        scene = Scene()
+        for k, v in self.objects.items():
+            scene.add_object(v, k, v.x, v.y)
+        return scene
+
     def call_event(self, event: str, *args, **kwargs):
         """Calls an event, running `on_<event name>` in all :py:class:`Object` s, if present.
         

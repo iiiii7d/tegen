@@ -174,7 +174,7 @@ class Sprite(Object):
             new_pixels[new_coords] = pixel_dict
 
 class Text(Object):
-    """Represents some text on a screen.
+    """Inherited from :py:class:`Object`. Represents some text on a screen.
 
     .. versionadded:: 0.0
 
@@ -187,10 +187,10 @@ class Text(Object):
     .. py:attribute:: anchor
        :type: str
     
-       The anchor of text
+       The anchor of text, one of ``tr``, ``tl``, ``br``, ``bl``, ``center``
 
        .. versionadded:: 0.0
-       
+
     .. py:attribute:: text
        :type: str
        
@@ -258,3 +258,7 @@ class Text(Object):
             for char_num, char in enumerate(line):
                 result[char_num-ox, line_num-oy] = char
         return result
+
+class TextInput(Text):
+    """Inherited from :py:class:`Text`. Represents a text input box."""
+    pass
