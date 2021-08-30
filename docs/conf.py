@@ -54,7 +54,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 html_theme = 'sphinx_material'
 
-tml_theme_options = {
+html_theme_options = {
 
     # Set the name of the project to appear in the navigation.
     'nav_title': 'tegen '+release,
