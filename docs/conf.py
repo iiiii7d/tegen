@@ -54,6 +54,8 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 html_theme = 'sphinx_material'
 
+branch = os.getcwd().split("/")[-1]
+
 html_theme_options = {
 
     # Set the name of the project to appear in the navigation.
@@ -69,6 +71,8 @@ html_theme_options = {
     'globaltoc_collapse': False,
     # If True, show hidden TOC entries
     'globaltoc_includehidden': False,
+
+    'base_url': 'https://tegen.readthedocs.io/en/{}/'.format(branch)
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
