@@ -75,7 +75,7 @@ html_theme_options = {
     'base_url': 'https://tegen.readthedocs.io/en/{}/'.format(branch)
 }
 html_sidebars = {
-    "**": ["globaltoc.html"]
+    "**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
