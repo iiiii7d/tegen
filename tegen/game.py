@@ -6,7 +6,7 @@ import math
 import traceback
 
 from tegen.scene import Scene
-from tegen.objects import Screen, Sprite, Object, Text
+from tegen.objects import Screen, Sprite, Object, Text, TextInput
 import tegen.pixel as pixel
 
 class Game:
@@ -61,7 +61,14 @@ class Game:
 
        A list of milliseconds per frame.
 
-       .. versionadded:: 0.0"""
+       .. versionadded:: 0.0
+       
+    .. py:attribute:: current_text_input
+       :type: TextInput
+       
+       The text input that is currently triggered. Is ``None`` if there is no inputs triggered.
+       
+       .. versionadded:: 0.1"""
     
     term = blessed.Terminal()
 
@@ -73,6 +80,7 @@ class Game:
         self.screen = Screen(0, 0)
         self.current_scene: Scene = None
         self.speeds: List[float] = []
+        self.current_text_input: TextInput = None
 
     def start(self, show_info: bool=True, info_wait: Union[int, float]=3):
         """Starts the game.
@@ -312,6 +320,10 @@ def _keyboard(game: Game):
         while game.game_on:
             with term.cbreak():
                 key = term.inkey(timeout=1)
-                if key: game.call_event("keyboard_press", key)
+                if key:
+                    if game.current_text_input is None:
+                        game.call_event("keyboard_press", key)
+                    else:
+                        game.current_text_input.on_keyboard_press(game, key)
     except Exception:
         game.handle_error()

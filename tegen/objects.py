@@ -260,5 +260,33 @@ class Text(Object):
         return result
 
 class TextInput(Text):
-    """Inherited from :py:class:`Text`. Represents a text input box."""
-    pass
+    """Inherited from :py:class:`Text`. Represents a text input box.
+    
+    .. versionadded:: 0.1
+    
+    .. py:attribute:: game
+       :type: Game
+    
+       .. versionadded:: 0.1
+       
+       The game that the text input is attached to. Is ``None`` when not triggered."""
+    
+    game = None
+    def trigger(self, game):
+        """Triggers the text input and enters input mode.
+
+        .. versionadded:: 0.1
+
+        :param Game game: The game object"""
+        game.current_text_input = self
+        self.game = game
+    
+    def on_keyboard_press(self, g, key: Keystroke):
+        pass
+
+    def release(self):
+        """Releases the text input and exits input mode.
+
+        .. versionadded:: 0.1"""
+        self.game.current_text_input = None
+        self.game = None
