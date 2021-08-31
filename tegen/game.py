@@ -175,6 +175,7 @@ class Game:
         obj.x = x
         obj.y = y
         self.objects[id_] = obj
+        obj.on_init(self)
 
     def remove_object_by_id(self, id_: str, nonexist_error: bool = False):
         """Removes an :py:class:`Object` from the game by its ID.
@@ -184,22 +185,32 @@ class Game:
         :param str id_: The ID of the object to remove
         :param bool nonexist_error: Whether to raise an error if an object does not exist in the game."""
         try:
+            self.objects[id_].on_end(self)
             del self.objects[id_]
         except KeyError as e:
             if nonexist_error: raise e
 
-    def remove_object_by_class(self, cls: type):
+    def remove_object_by_class(self, cls: type) -> int:
         """Removes :py:class:`Object` s from the game by their class type.
 
         .. versionadded:: 0.0
 
+        .. versionchanged:: 0.1
+           Now returns the number of objects removed
+
         :param type cls: The class, should be a subclass of :py:class:`Object`
-        :raises TypeError: if the class is not a subclass of :py:class:`Object`"""
+        :raises TypeError: if the class is not a subclass of :py:class:`Object`
+        :returns: The number of objects removed
+        :rtype: int"""
         if not issubclass(cls, Object):
             raise TypeError("Class is not subclass of Object")
+        count = 0
         for id_, obj in self.objects.items():
             if isinstance(obj, cls):
+                count += 1
+                self.objects[id_].on_end(self)
                 del self.objects[id_]
+        return count
 
     def add_keyboard_listener(self):
         """Adds a keyboard listener, to fire events when a key is pressed.
@@ -207,6 +218,15 @@ class Game:
         .. versionadded:: 0.0"""
         self.keyboard_listener = threading.Thread(target=_keyboard, args=(self,))
         self.keyboard_listener.start()
+
+    def wait_until_key_released(self):
+        """Waits until all keys are released.
+        
+        .. versionadded:: 0.1"""
+        term = self.term
+        with term.cbreak():
+            while term.inkey(timeout=0.1) != "":
+                pass
             
     def mspf(self) -> Union[Union[float, int], None]:
         """Gets the number of milliseconds per frame.

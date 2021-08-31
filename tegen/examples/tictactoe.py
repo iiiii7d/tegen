@@ -77,9 +77,7 @@ class Notif(tegen.objects.Text):
             self.turn = 2 if self.turn == 1 else 1
             self.fore = 0x00ccff if self.turn == 2 else 0xff3300
             self.text = "Player " + str(self.turn) + "'s turn"
-        with term.cbreak():
-            while term.inkey(timeout=0.1) != "":
-                pass
+        g.wait_until_key_released()
 
 
 scene.add_object(Lines(), "lines", 0, 0)

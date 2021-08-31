@@ -263,30 +263,117 @@ class TextInput(Text):
     """Inherited from :py:class:`Text`. Represents a text input box.
     
     .. versionadded:: 0.1
+
+    .. warning:: Triggering this would take the ID `/{TextInput.id}.cursor/` as well for the cursor
     
     .. py:attribute:: game
        :type: Game
-    
-       .. versionadded:: 0.1
        
-       The game that the text input is attached to. Is ``None`` when not triggered."""
+       The game that the text input is attached to. Is ``None`` when not triggered.
+       
+       .. versionadded:: 0.1
+
+    .. py:attribute:: cursor
+       :type: TextInput.Cursor
+       
+       The cursor of the text input. Is ``None`` when not triggered.
+       
+       .. versionadded:: 0.1"""
     
+    class Cursor(Sprite):
+        """Inherited from :py:class:`Sprite`. Represents the cursor of :py:class:`TextInput`.
+        
+        .. versionadded:: 0.1
+        
+        .. py:attribute:: text_pos
+           :type: int
+       
+           The position of the cursor in the text, or the position of the character that has yet to be entered in.
+           
+            .. versionadded:: 0.1
+
+           .. py:attribute:: text_pos
+           :type: int
+       
+           The line that the cursor is at
+           
+           .. versionadded:: 0.1"""
+        text_pos = 0
+        line = 0
+
     game = None
+    cursor: Cursor = None
     def trigger(self, game):
         """Triggers the text input and enters input mode.
 
         .. versionadded:: 0.1
 
         :param Game game: The game object"""
+        if game.current_text_input is not None: game.current_text_input.release()
         game.current_text_input = self
         self.game = game
-    
-    def on_keyboard_press(self, g, key: Keystroke):
-        pass
+        self.cursor = self.Cursor()
+        self.cursor.text_pos = len(self.text)
+        self.cursor.pixels = pixel.from_2d_array(char=[' '],
+                                                 back=[[0xffffff if self.back is None else 0xffffff-self.back]])
+        x = self.x + len(self.text.split("\n")[-1])
+        y = self.y + self.text.count("\n")
+        game.add_object(self.cursor, f"/{self.id}.cursor/", x, y, override=True)
+        game.wait_until_key_released()
+
+    def on_keyboard_press(self, game, key: Keystroke):
+        if self.game is None: return
+        if key.is_sequence:
+            if key.name == 'KEY_ENTER':
+                self.text = self.text[:self.cursor.text_pos+1] + "\n" + self.text[self.cursor.text_pos+1:]
+                self.cursor.y += 1
+                self.cursor.line += 1
+                self.cursor.x = self.x
+                self.cursor.text_pos += 1
+            elif key.name == 'KEY_ESCAPE':
+                self.release()
+            elif key.name == 'KEY_BACKSPACE':
+                if self.text == "" or self.cursor.text_pos == 0: return
+                char = self.text[self.cursor.text_pos-1]
+                self.text = self.text[:self.cursor.text_pos-1] + self.text[self.cursor.text_pos:]
+                if char != "\n":
+                    self.cursor.x -= 1
+                else:
+                    self.cursor.y -= 1
+                    self.cursor.line -= 1
+                    self.cursor.x = self.x + len(self.text.split("\n")[self.cursor.line])
+                self.cursor.text_pos -= 1
+            elif key.name == 'KEY_DELETE':
+                if self.text == "" or self.cursor.text_pos == len(self.text): return
+                char = self.text[self.cursor.text_pos]
+                self.text = self.text[:self.cursor.text_pos] + self.text[self.cursor.text_pos+1:]
+            elif key.name == 'KEY_RIGHT':
+                if self.cursor.text_pos == len(self.text): return
+                if self.text[self.cursor.text_pos] == "\n":
+                    self.cursor.line += 1
+                    self.cursor.x = self.x
+                    self.cursor.y += 1
+                else:
+                    self.cursor.x += 1
+                self.cursor.text_pos += 1
+            elif key.name == 'KEY_LEFT':
+                if self.cursor.text_pos == 0: return
+                if self.text[self.cursor.text_pos-1] == "\n":
+                    self.cursor.line -= 1
+                    self.cursor.x = len(self.text.split("\n")[self.cursor.line])
+                    self.cursor.y -= 1
+                else:
+                    self.cursor.x -= 1
+                self.cursor.text_pos -= 1
+        else:
+            self.text = self.text[:self.cursor.text_pos+1] + str(key) + self.text[self.cursor.text_pos+1:]
+            self.cursor.x += 1
+            self.cursor.text_pos += 1
 
     def release(self):
         """Releases the text input and exits input mode.
 
         .. versionadded:: 0.1"""
+        self.game.remove_object_by_id(f"/{self.id}.cursor/", nonexist_error=False)
         self.game.current_text_input = None
         self.game = None

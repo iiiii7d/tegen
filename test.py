@@ -19,21 +19,23 @@ class FpsText(tegen.objects.Text):
         self.text = "fps: "+str(g.fps())
 class KeyText(tegen.objects.Text):
     def on_keyboard_press(self, g: tegen.Game, key: Keystroke):
-        self.text += key
         if key == 'q':
             g.end()
+        elif key == 'a':
+            g.objects['input'].trigger(g)
 
 scene.add_object(GameObj(), "obj", 0, 1)
 scene.add_object(FpsText("fps:"), "fps", 0, 0)
 scene.add_object(KeyText(" ", back="00ff00"), "key", 0, 4)
+scene.add_object(tegen.objects.TextInput(""), "input", 0, 6)
 
 try:
     game.start(info_wait=1)
     game.add_keyboard_listener()
     game.load_scene(scene)
-    import time
-    time.sleep(15)
-    game.end()
+    #import time
+    #time.sleep(15)
+    #game.end()
 except Exception:
     game.handle_error()
 print("end")
