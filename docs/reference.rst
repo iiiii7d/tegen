@@ -42,6 +42,9 @@ Objects
 .. autoclass:: Text
    :members:
 
+.. autoclass:: TextInput
+   :members:
+
 Pixel Utils
 -----------
 

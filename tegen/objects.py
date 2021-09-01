@@ -314,18 +314,19 @@ class TextInput(Text):
         self.game = game
         self.cursor = self.Cursor()
         self.cursor.text_pos = len(self.text)
-        self.cursor.pixels = pixel.from_2d_array(char=[' '],
-                                                 back=[[0xffffff if self.back is None else 0xffffff-self.back]])
+        self.cursor.pixels = pixel.from_2d_array(char=[" "],
+                                                 back=[[0x808080 if self.back is None else 0xffffff-self.back]])
         x = self.x + len(self.text.split("\n")[-1])
         y = self.y + self.text.count("\n")
         game.add_object(self.cursor, f"/{self.id}.cursor/", x, y, override=True)
         game.wait_until_key_released()
 
     def on_keyboard_press(self, game, key: Keystroke):
+        """:meta private:"""
         if self.game is None: return
         if key.is_sequence:
             if key.name == 'KEY_ENTER':
-                self.text = self.text[:self.cursor.text_pos+1] + "\n" + self.text[self.cursor.text_pos+1:]
+                self.text = self.text[:self.cursor.text_pos] + "\n" + self.text[self.cursor.text_pos:]
                 self.cursor.y += 1
                 self.cursor.line += 1
                 self.cursor.x = self.x
@@ -366,7 +367,7 @@ class TextInput(Text):
                     self.cursor.x -= 1
                 self.cursor.text_pos -= 1
         else:
-            self.text = self.text[:self.cursor.text_pos+1] + str(key) + self.text[self.cursor.text_pos+1:]
+            self.text = self.text[:self.cursor.text_pos] + str(key) + self.text[self.cursor.text_pos:]
             self.cursor.x += 1
             self.cursor.text_pos += 1
 

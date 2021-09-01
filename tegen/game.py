@@ -110,7 +110,7 @@ class Game:
         .. versionadded:: 0.0"""
         term = self.term
         for id_, obj in self.objects.items():
-            obj.on_end(self)
+            threading.Thread(target=obj.on_end, args=(self,)).start()
         self.game_on = False
         print(term.home + term.clear + term.bright_yellow("Stopping..."), end='')
         time.sleep(0.5)
@@ -124,12 +124,12 @@ class Game:
         :param Scene scene: The scene to load
         :param bool clear_objects: Whether to clear all objects in the previous scene before loading the new scene"""
         for id_, obj in self.objects.items():
-            obj.on_end(self)
+            threading.Thread(target=obj.on_end, args=(self,)).start()
         self.current_scene = scene
         if clear_objects: self.objects.clear()
         self.objects.update(scene.objects)
         for id_, obj in self.objects.items():
-            obj.on_init(self)
+            threading.Thread(target=obj.on_init, args=(self,)).start()
 
     def save_scene(self) -> Scene:
         """Saves the current game as a scene.
@@ -175,7 +175,7 @@ class Game:
         obj.x = x
         obj.y = y
         self.objects[id_] = obj
-        obj.on_init(self)
+        threading.Thread(target=obj.on_init, args=(self,)).start()
 
     def remove_object_by_id(self, id_: str, nonexist_error: bool = False):
         """Removes an :py:class:`Object` from the game by its ID.
@@ -185,6 +185,7 @@ class Game:
         :param str id_: The ID of the object to remove
         :param bool nonexist_error: Whether to raise an error if an object does not exist in the game."""
         try:
+            # todo executor
             self.objects[id_].on_end(self)
             del self.objects[id_]
         except KeyError as e:
@@ -208,6 +209,7 @@ class Game:
         for id_, obj in self.objects.items():
             if isinstance(obj, cls):
                 count += 1
+                # todo executor
                 self.objects[id_].on_end(self)
                 del self.objects[id_]
         return count
@@ -310,11 +312,11 @@ def _loop(game: Game):
         while game.game_on:
             loop_start = time.time()
             for obj in game.objects.values():
-                obj.pre_update(game)
+                threading.Thread(target=obj.pre_update, args=(game,)).start()
             for obj in game.objects.values():
-                obj.update(game)
+                threading.Thread(target=obj.update, args=(game,)).start()
             for obj in game.objects.values():
-                obj.post_update(game)
+                threading.Thread(target=obj.post_update, args=(game,)).start()
 
             out = ""
             lx, rx, ty, by = game.screen.edges()
@@ -344,6 +346,6 @@ def _keyboard(game: Game):
                     if game.current_text_input is None:
                         game.call_event("keyboard_press", key)
                     else:
-                        game.current_text_input.on_keyboard_press(game, key)
+                        threading.Thread(target=game.current_text_input.on_keyboard_press, args=(game, key)).start()
     except Exception:
         game.handle_error()
